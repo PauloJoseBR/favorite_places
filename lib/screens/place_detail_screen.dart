@@ -25,8 +25,10 @@ class PlaceDetailScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_back_rounded,
-                      color: Color(0xFF183F3B)),
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Color(0xFF183F3B),
+                  ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
@@ -64,8 +66,11 @@ class PlaceDetailScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Center(
-                    child: Icon(Icons.image_not_supported_rounded,
-                        size: 60, color: Color(0xFF5A8A83)),
+                    child: Icon(
+                      Icons.image_not_supported_rounded,
+                      size: 60,
+                      color: Color(0xFF5A8A83),
+                    ),
                   ),
                 ),
               const SizedBox(height: 24),
@@ -75,9 +80,9 @@ class PlaceDetailScreen extends StatelessWidget {
                 child: Text(
                   place.name,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: const Color(0xFF183F3B),
-                        fontWeight: FontWeight.w800,
-                      ),
+                    color: const Color(0xFF183F3B),
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
             ],

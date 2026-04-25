@@ -82,8 +82,7 @@ class _LocationInputState extends State<LocationInput> {
             ),
             children: [
               TileLayer(
-                urlTemplate:
-                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.example.favorite_places',
               ),
               MarkerLayer(
@@ -105,8 +104,7 @@ class _LocationInputState extends State<LocationInput> {
             left: 0,
             right: 0,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               color: Colors.black54,
               child: Text(
                 '${_pickedLocation!.latitude.toStringAsFixed(5)}, '

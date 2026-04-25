@@ -66,6 +66,10 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to take photos for your favorite places.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs your location to save it with your favorite place.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to your photo library to pick images for your favorite places.</string>
 </dict>

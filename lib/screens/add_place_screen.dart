@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:favorite_places/models/place.dart';
+import 'package:favorite_places/services/places_database.dart';
 import 'package:favorite_places/widgets/image_input.dart';
 import 'package:favorite_places/widgets/location_input.dart';
 
@@ -22,12 +23,25 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
     super.dispose();
   }
 
-  void _savePlace() {
+  void _savePlace() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
-    Navigator.of(context).pop(
-      Place(name: name, image: _selectedImage, location: _selectedLocation),
+
+    String? imagePath;
+    if (_selectedImage != null) {
+      imagePath = await PlacesDatabase.instance.saveImagePermanently(
+        _selectedImage!,
+      );
+    }
+
+    final place = Place(
+      name: name,
+      imagePath: imagePath,
+      location: _selectedLocation,
     );
+
+    final saved = await PlacesDatabase.instance.insertPlace(place);
+    if (mounted) Navigator.of(context).pop(saved);
   }
 
   @override

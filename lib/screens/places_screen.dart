@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:favorite_places/models/place.dart';
 import 'package:favorite_places/screens/add_place_screen.dart';
 import 'package:favorite_places/screens/place_detail_screen.dart';
+import 'package:favorite_places/services/places_database.dart';
 
 class PlacesScreen extends StatefulWidget {
   const PlacesScreen({super.key});
@@ -13,10 +14,25 @@ class PlacesScreen extends StatefulWidget {
 class _PlacesScreenState extends State<PlacesScreen> {
   final _places = <Place>[];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadPlaces();
+  }
+
+  Future<void> _loadPlaces() async {
+    final places = await PlacesDatabase.instance.fetchAllPlaces();
+    setState(() {
+      _places
+        ..clear()
+        ..addAll(places);
+    });
+  }
+
   Future<void> _openAddPlace() async {
-    final place = await Navigator.of(context).push<Place>(
-      MaterialPageRoute(builder: (_) => const AddPlaceScreen()),
-    );
+    final place = await Navigator.of(
+      context,
+    ).push<Place>(MaterialPageRoute(builder: (_) => const AddPlaceScreen()));
     if (place == null) return;
     setState(() => _places.insert(0, place));
   }
@@ -46,9 +62,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
                         children: [
                           Text(
                             'Favorite Places',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineLarge
+                            style: Theme.of(context).textTheme.headlineLarge
                                 ?.copyWith(
                                   color: const Color(0xFF183F3B),
                                   fontSize: 40,
@@ -100,7 +114,8 @@ class _PlacesScreenState extends State<PlacesScreen> {
                               return TweenAnimationBuilder<double>(
                                 tween: Tween(begin: 0, end: 1),
                                 duration: Duration(
-                                    milliseconds: 240 + (index * 60)),
+                                  milliseconds: 240 + (index * 60),
+                                ),
                                 curve: Curves.easeOut,
                                 builder: (context, value, child) {
                                   return Opacity(
@@ -123,18 +138,21 @@ class _PlacesScreenState extends State<PlacesScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 10),
+                                      horizontal: 12,
+                                      vertical: 10,
+                                    ),
                                     decoration: BoxDecoration(
-                                      color: Colors.white
-                                          .withValues(alpha: 0.78),
-                                      borderRadius:
-                                          BorderRadius.circular(16),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.78,
+                                      ),
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: Row(
                                       children: [
                                         ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                           child: place.image != null
                                               ? Image.file(
                                                   place.image!,
@@ -146,7 +164,8 @@ class _PlacesScreenState extends State<PlacesScreen> {
                                                   width: 56,
                                                   height: 56,
                                                   color: const Color(
-                                                      0xFFCEE2E0),
+                                                    0xFFCEE2E0,
+                                                  ),
                                                   child: const Icon(
                                                     Icons.place_rounded,
                                                     color: Color(0xFF1E5B53),

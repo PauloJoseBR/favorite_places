@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:favorite_places/models/place.dart';
 
 class PlaceDetailScreen extends StatelessWidget {
@@ -92,71 +94,79 @@ class PlaceDetailScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Stack(
-                      children: [
-                        Image.network(
-                          'https://staticmap.openstreetmap.de/staticmap.php'
-                          '?center=${place.location!.latitude},${place.location!.longitude}'
-                          '&zoom=16&size=600x220'
-                          '&markers=${place.location!.latitude},${place.location!.longitude},red-pushpin',
-                          height: 160,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (_, child, progress) =>
-                              progress == null
-                              ? child
-                              : const SizedBox(
-                                  height: 160,
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: Color(0xFF1D5A52),
+                    child: SizedBox(
+                      height: 160,
+                      child: Stack(
+                        children: [
+                          FlutterMap(
+                            options: MapOptions(
+                              initialCenter: LatLng(
+                                place.location!.latitude,
+                                place.location!.longitude,
+                              ),
+                              initialZoom: 16,
+                              interactionOptions: const InteractionOptions(
+                                flags: InteractiveFlag.none,
+                              ),
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                userAgentPackageName:
+                                    'com.example.favorite_places',
+                              ),
+                              MarkerLayer(
+                                markers: [
+                                  Marker(
+                                    point: LatLng(
+                                      place.location!.latitude,
+                                      place.location!.longitude,
+                                    ),
+                                    child: const Icon(
+                                      Icons.location_on_rounded,
+                                      color: Colors.red,
+                                      size: 40,
                                     ),
                                   ),
-                                ),
-                          errorBuilder: (_, __, ___) => const SizedBox(
-                            height: 160,
-                            child: Center(
-                              child: Icon(
-                                Icons.map_outlined,
-                                size: 40,
-                                color: Color(0xFF5A8A83),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 6,
+                                horizontal: 12,
+                              ),
+                              color: Colors.black54,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.location_on_rounded,
+                                    color: Colors.white,
+                                    size: 14,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '${place.location!.latitude.toStringAsFixed(5)}, '
+                                    '${place.location!.longitude.toStringAsFixed(5)}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 6,
-                              horizontal: 12,
-                            ),
-                            color: Colors.black54,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.location_on_rounded,
-                                  color: Colors.white,
-                                  size: 14,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  '${place.location!.latitude.toStringAsFixed(5)}, '
-                                  '${place.location!.longitude.toStringAsFixed(5)}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

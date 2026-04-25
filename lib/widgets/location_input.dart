@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:favorite_places/models/place.dart';
 
@@ -14,15 +16,6 @@ class LocationInput extends StatefulWidget {
 class _LocationInputState extends State<LocationInput> {
   PlaceLocation? _pickedLocation;
   bool _isLoading = false;
-
-  String get _mapPreviewUrl {
-    if (_pickedLocation == null) return '';
-    final lat = _pickedLocation!.latitude;
-    final lng = _pickedLocation!.longitude;
-    return 'https://staticmap.openstreetmap.de/staticmap.php'
-        '?center=$lat,$lng&zoom=16&size=600x300'
-        '&markers=$lat,$lng,red-pushpin';
-  }
 
   Future<void> _getCurrentLocation() async {
     final locationService = Location();
@@ -73,31 +66,47 @@ class _LocationInputState extends State<LocationInput> {
         child: CircularProgressIndicator(color: Color(0xFF1D5A52)),
       );
     } else if (_pickedLocation != null) {
+      final point = LatLng(
+        _pickedLocation!.latitude,
+        _pickedLocation!.longitude,
+      );
       previewContent = Stack(
-        fit: StackFit.expand,
         children: [
-          Image.network(
-            _mapPreviewUrl,
-            fit: BoxFit.cover,
-            loadingBuilder: (_, child, progress) => progress == null
-                ? child
-                : const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF1D5A52)),
-                  ),
-            errorBuilder: (_, __, ___) => const Center(
-              child: Icon(
-                Icons.map_outlined,
-                size: 48,
-                color: Color(0xFF5A8A83),
+          FlutterMap(
+            options: MapOptions(
+              initialCenter: point,
+              initialZoom: 16,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.none,
               ),
             ),
+            children: [
+              TileLayer(
+                urlTemplate:
+                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.example.favorite_places',
+              ),
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    point: point,
+                    child: const Icon(
+                      Icons.location_on_rounded,
+                      color: Colors.red,
+                      size: 40,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               color: Colors.black54,
               child: Text(
                 '${_pickedLocation!.latitude.toStringAsFixed(5)}, '

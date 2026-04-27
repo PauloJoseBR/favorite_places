@@ -32,31 +32,33 @@ class _ImageInputState extends State<ImageInput> {
       builder: (_) => Container(
         margin: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFFF2F7F5),
-          borderRadius: BorderRadius.circular(20),
+          color: const Color(0xFF111A30),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Container(
-              width: 36,
+              width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: const Color(0xFFBDCDCA),
+                color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 22),
             const Text(
-              'Choose Image Source',
+              'Choose Photo Source',
               style: TextStyle(
+                color: Colors.white,
                 fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: Color(0xFF183F3B),
+                fontSize: 18,
+                letterSpacing: -0.2,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 28),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -78,7 +80,7 @@ class _ImageInputState extends State<ImageInput> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
           ],
         ),
       ),
@@ -90,30 +92,53 @@ class _ImageInputState extends State<ImageInput> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Preview area
+        const Text(
+          'PHOTO',
+          style: TextStyle(
+            color: Color(0xFF4FACFE),
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.4,
+          ),
+        ),
+        const SizedBox(height: 10),
         GestureDetector(
           onTap: () => _showSourcePicker(context),
           child: Container(
             height: 220,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Colors.white.withValues(alpha: 0.6),
+              color: Colors.white.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: _selectedImage == null
+                    ? Colors.white.withValues(alpha: 0.12)
+                    : Colors.transparent,
+              ),
             ),
             clipBehavior: Clip.hardEdge,
             child: _selectedImage == null
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.add_a_photo_rounded,
-                        size: 48,
-                        color: Color(0xFF5A8A83),
+                    children: [
+                      Container(
+                        width: 66,
+                        height: 66,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4FACFE).withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.add_a_photo_rounded,
+                          size: 30,
+                          color: Color(0xFF4FACFE),
+                        ),
                       ),
-                      SizedBox(height: 10),
-                      Text(
+                      const SizedBox(height: 14),
+                      const Text(
                         'Tap to add a photo',
                         style: TextStyle(
-                          color: Color(0xFF5A8A83),
+                          color: Color(0xFF8899BB),
+                          fontSize: 15,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -123,20 +148,22 @@ class _ImageInputState extends State<ImageInput> {
                     fit: StackFit.expand,
                     children: [
                       Image.file(_selectedImage!, fit: BoxFit.cover),
-                      // Change photo overlay button
                       Positioned(
-                        bottom: 10,
-                        right: 10,
+                        bottom: 12,
+                        right: 12,
                         child: GestureDetector(
                           onTap: () => _showSourcePicker(context),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
+                              horizontal: 14,
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.black54,
+                              color: Colors.black.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2),
+                              ),
                             ),
                             child: const Row(
                               mainAxisSize: MainAxisSize.min,
@@ -144,7 +171,7 @@ class _ImageInputState extends State<ImageInput> {
                                 Icon(
                                   Icons.edit_rounded,
                                   color: Colors.white,
-                                  size: 16,
+                                  size: 15,
                                 ),
                                 SizedBox(width: 6),
                                 Text(
@@ -164,8 +191,7 @@ class _ImageInputState extends State<ImageInput> {
                   ),
           ),
         ),
-        // Action buttons below preview
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
@@ -175,7 +201,7 @@ class _ImageInputState extends State<ImageInput> {
                 onTap: () => _pickImage(ImageSource.camera),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 12),
             Expanded(
               child: _ActionButton(
                 icon: Icons.photo_library_rounded,
@@ -203,15 +229,37 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      onPressed: onTap,
-      icon: Icon(icon, size: 18),
-      label: Text(label),
-      style: OutlinedButton.styleFrom(
-        foregroundColor: const Color(0xFF1D5A52),
-        side: const BorderSide(color: Color(0xFF1D5A52)),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 13),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 18, color: const Color(0xFF4FACFE)),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -235,19 +283,31 @@ class _SourceButton extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(22),
             decoration: BoxDecoration(
-              color: const Color(0xFF1D5A52),
-              borderRadius: BorderRadius.circular(16),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF4FACFE), Color(0xFF60D5FF)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF4FACFE).withValues(alpha: 0.4),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
-            child: Icon(icon, color: Colors.white, size: 30),
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
             label,
             style: const TextStyle(
-              color: Color(0xFF183F3B),
+              color: Colors.white,
               fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
         ],

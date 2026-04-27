@@ -30,9 +30,9 @@ class _PlacesScreenState extends State<PlacesScreen> {
   }
 
   Future<void> _openAddPlace() async {
-    final place = await Navigator.of(
-      context,
-    ).push<Place>(MaterialPageRoute(builder: (_) => const AddPlaceScreen()));
+    final place = await Navigator.of(context).push<Place>(
+      MaterialPageRoute(builder: (_) => const AddPlaceScreen()),
+    );
     if (place == null) return;
     setState(() => _places.insert(0, place));
   }
@@ -40,154 +40,109 @@ class _PlacesScreenState extends State<PlacesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openAddPlace,
+        backgroundColor: const Color(0xFF4FACFE),
+        foregroundColor: Colors.white,
+        elevation: 6,
+        child: const Icon(Icons.add_rounded, size: 28),
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFF2E8CF), Color(0xFFDBE8D8), Color(0xFFCEE2E0)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            colors: [Color(0xFF0A0E1A), Color(0xFF111A30)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Header
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Favorite Places',
-                            style: Theme.of(context).textTheme.headlineLarge
-                                ?.copyWith(
-                                  color: const Color(0xFF183F3B),
-                                  fontSize: 40,
-                                ),
-                          ),
-                          const SizedBox(height: 4),
                           const Text(
-                            'Save the places you love most.',
+                            'My Places',
                             style: TextStyle(
-                              color: Color(0xFF37534D),
-                              fontSize: 16,
+                              color: Colors.white,
+                              fontSize: 38,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.5,
+                              height: 1.1,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            _places.isEmpty
+                                ? 'Start saving places you love'
+                                : '${_places.length} saved location${_places.length == 1 ? '' : 's'}',
+                            style: const TextStyle(
+                              color: Color(0xFF8899BB),
+                              fontSize: 15,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    FloatingActionButton(
-                      onPressed: _openAddPlace,
-                      backgroundColor: const Color(0xFF1D5A52),
-                      foregroundColor: Colors.white,
-                      elevation: 2,
-                      child: const Icon(Icons.add_rounded),
+                    Container(
+                      width: 10,
+                      height: 10,
+                      margin: const EdgeInsets.only(top: 8),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF4FACFE),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x664FACFE),
+                            blurRadius: 10,
+                            spreadRadius: 3,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 28),
+                // List
                 Expanded(
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 350),
                     child: _places.isEmpty
-                        ? const Center(
-                            child: Text(
-                              'No favorite places yet.',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF385A54),
-                                fontSize: 16,
-                              ),
-                            ),
-                          )
+                        ? const _EmptyState()
                         : ListView.separated(
                             key: const ValueKey('places-list'),
                             itemCount: _places.length,
                             separatorBuilder: (_, __) =>
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 12),
                             itemBuilder: (context, index) {
                               final place = _places[index];
                               return TweenAnimationBuilder<double>(
                                 tween: Tween(begin: 0, end: 1),
-                                duration: Duration(
-                                  milliseconds: 240 + (index * 60),
+                                duration:
+                                    Duration(milliseconds: 280 + (index * 60)),
+                                curve: Curves.easeOutCubic,
+                                builder: (context, value, child) => Opacity(
+                                  opacity: value,
+                                  child: Transform.translate(
+                                    offset: Offset(0, 18 * (1 - value)),
+                                    child: child,
+                                  ),
                                 ),
-                                curve: Curves.easeOut,
-                                builder: (context, value, child) {
-                                  return Opacity(
-                                    opacity: value,
-                                    child: Transform.translate(
-                                      offset: Offset(0, 12 * (1 - value)),
-                                      child: child,
-                                    ),
-                                  );
-                                },
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            PlaceDetailScreen(place: place),
-                                      ),
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.78,
-                                      ),
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                          child: place.image != null
-                                              ? Image.file(
-                                                  place.image!,
-                                                  width: 56,
-                                                  height: 56,
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : Container(
-                                                  width: 56,
-                                                  height: 56,
-                                                  color: const Color(
-                                                    0xFFCEE2E0,
-                                                  ),
-                                                  child: const Icon(
-                                                    Icons.place_rounded,
-                                                    color: Color(0xFF1E5B53),
-                                                  ),
-                                                ),
-                                        ),
-                                        const SizedBox(width: 14),
-                                        Expanded(
-                                          child: Text(
-                                            place.name,
-                                            style: const TextStyle(
-                                              color: Color(0xFF203933),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                        ),
-                                        const Icon(
-                                          Icons.chevron_right_rounded,
-                                          color: Color(0xFF37534D),
-                                        ),
-                                      ],
+                                child: _PlaceCard(
+                                  place: place,
+                                  onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          PlaceDetailScreen(place: place),
                                     ),
                                   ),
                                 ),
@@ -199,6 +154,167 @@ class _PlacesScreenState extends State<PlacesScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 96,
+            height: 96,
+            decoration: BoxDecoration(
+              color: const Color(0xFF4FACFE).withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: const Color(0xFF4FACFE).withValues(alpha: 0.2),
+                width: 1.5,
+              ),
+            ),
+            child: const Icon(
+              Icons.explore_rounded,
+              color: Color(0xFF4FACFE),
+              size: 46,
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'No places saved yet',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.3,
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Tap the + button to add\nyour first favorite place',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Color(0xFF8899BB),
+              fontSize: 15,
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlaceCard extends StatelessWidget {
+  final Place place;
+  final VoidCallback onTap;
+
+  const _PlaceCard({required this.place, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+          ),
+        ),
+        child: Row(
+          children: [
+            Hero(
+              tag: 'place-${place.name}',
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: place.image != null
+                    ? Image.file(
+                        place.image!,
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        width: 72,
+                        height: 72,
+                        color: const Color(0xFF1A2744),
+                        child: const Icon(
+                          Icons.landscape_rounded,
+                          color: Color(0xFF4FACFE),
+                          size: 32,
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    place.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (place.location != null) ...[
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_rounded,
+                          color: Color(0xFF4FACFE),
+                          size: 13,
+                        ),
+                        const SizedBox(width: 3),
+                        Expanded(
+                          child: Text(
+                            '${place.location!.latitude.toStringAsFixed(4)}, '
+                            '${place.location!.longitude.toStringAsFixed(4)}',
+                            style: const TextStyle(
+                              color: Color(0xFF8899BB),
+                              fontSize: 13,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ] else
+                    const SizedBox(height: 5),
+                  if (place.location == null)
+                    const Text(
+                      'No location saved',
+                      style: TextStyle(
+                        color: Color(0xFF8899BB),
+                        fontSize: 13,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Color(0xFF4FACFE),
+              size: 15,
+            ),
+          ],
         ),
       ),
     );

@@ -63,7 +63,7 @@ class _LocationInputState extends State<LocationInput> {
 
     if (_isLoading) {
       previewContent = const Center(
-        child: CircularProgressIndicator(color: Color(0xFF1D5A52)),
+        child: CircularProgressIndicator(color: Color(0xFF4FACFE)),
       );
     } else if (_pickedLocation != null) {
       final point = LatLng(
@@ -91,7 +91,7 @@ class _LocationInputState extends State<LocationInput> {
                     point: point,
                     child: const Icon(
                       Icons.location_on_rounded,
-                      color: Colors.red,
+                      color: Color(0xFFFF6B8A),
                       size: 40,
                     ),
                   ),
@@ -104,32 +104,61 @@ class _LocationInputState extends State<LocationInput> {
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              color: Colors.black54,
-              child: Text(
-                '${_pickedLocation!.latitude.toStringAsFixed(5)}, '
-                '${_pickedLocation!.longitude.toStringAsFixed(5)}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.transparent, Color(0xCC0A0E1A)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.location_on_rounded,
+                    color: Color(0xFF4FACFE),
+                    size: 14,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    '${_pickedLocation!.latitude.toStringAsFixed(5)}, '
+                    '${_pickedLocation!.longitude.toStringAsFixed(5)}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
         ],
       );
     } else {
-      previewContent = const Column(
+      previewContent = Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.location_on_outlined, size: 48, color: Color(0xFF5A8A83)),
-          SizedBox(height: 10),
-          Text(
-            'No location selected yet.',
+          Container(
+            width: 58,
+            height: 58,
+            decoration: BoxDecoration(
+              color: const Color(0xFF4FACFE).withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.location_on_outlined,
+              size: 28,
+              color: Color(0xFF4FACFE),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'No location selected yet',
             style: TextStyle(
-              color: Color(0xFF5A8A83),
+              color: Color(0xFF8899BB),
+              fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -143,23 +172,48 @@ class _LocationInputState extends State<LocationInput> {
         Container(
           height: 180,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: Colors.white.withValues(alpha: 0.6),
+            color: Colors.white.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
           clipBehavior: Clip.hardEdge,
           child: previewContent,
         ),
-        const SizedBox(height: 10),
-        OutlinedButton.icon(
-          onPressed: _isLoading ? null : _getCurrentLocation,
-          icon: const Icon(Icons.my_location_rounded, size: 18),
-          label: const Text('Get Current Location'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: const Color(0xFF1D5A52),
-            side: const BorderSide(color: Color(0xFF1D5A52)),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        const SizedBox(height: 12),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(14),
+            child: InkWell(
+              onTap: _isLoading ? null : _getCurrentLocation,
+              borderRadius: BorderRadius.circular(14),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.my_location_rounded,
+                      size: 18,
+                      color: Color(0xFF4FACFE),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Get Current Location',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
